@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactDOM from "react-dom";
+import QRCode from "react-qr-code";
 import '../../assets/css/curp.css';
 import Navbar from '../atoms/navbar';
 
@@ -87,6 +89,16 @@ function Curp() {
     return 'X'; 
   };
   
+  function descargarArchivo(curp) {
+    const elemento = document.createElement("a");
+    const archivo = new Blob([curp], { type: "text/plain" });
+    elemento.href = URL.createObjectURL(archivo);
+    elemento.download = "curp.txt";
+    document.body.appendChild(elemento);
+    elemento.click();
+    document.body.removeChild(elemento);
+  }
+
   const generarCURP = () => {
     let primerNombreGenerar = primernombre.toUpperCase();
     if (primerNombreGenerar === 'MARIA' || primerNombreGenerar === 'JOSE') {
@@ -215,6 +227,12 @@ function Curp() {
               <p>Fecha de nacimiento: {dia}/{mes}/{ano}</p>
               <p>Entidad de nacimiento: {entidadNacimiento}</p>
               <p>CURP: {curpGenerada}</p>
+                   <QRCode value={curpGenerada} size={90}/> 
+                   <div>
+                    <button className="generationQR" onClick={() => descargarArchivo(curpGenerada)}>
+                      Descargar CURP
+                    </button>
+                    </div>
             </div>
           )}
         </div>

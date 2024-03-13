@@ -18,8 +18,9 @@
   margin-top: -5vh;
   margin-left: -40vh;
   width: 60vh;
-  height: 70vh;
-  background-color: #F8B68D;
+  height: 85vh;
+  color: white;
+  background-color: #00A4AC;
   border-radius: 5vh;
 }
 
@@ -27,7 +28,7 @@
   font-size: large;
   font-weight: bold;
   text-align: center;
-  margin-top: 10vh;
+  margin-top: 7vh;
 }
 
 
@@ -97,5 +98,16 @@
   cursor: pointer;
   margin-bottom: 1VH;
 }
+
+.generationQR {
+  flex-direction: column;
+  background-color: #F8B68D;
+  border: none;
+  border-radius: 20px; 
+  padding: 10px 20px; 
+  cursor: pointer;
+  margin-bottom: 1VH;
+}
+
 
 
