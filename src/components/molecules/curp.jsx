@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import ReactDOM from "react-dom";
+  import React, { useState, useEffect } from 'react';
 import QRCode from "react-qr-code";
 import '../../assets/css/curp.css';
 import Navbar from '../atoms/navbar';
@@ -19,14 +18,23 @@ function Curp() {
   const [curpGenerada, setCurpGenerada] = useState('');
 
   function generateRandomCode() {
-    // Genera un código aleatorio de 6 dígitos
-    return Math.floor(100000 + Math.random() * 900000);
+    return Math.floor(10 + Math.random() * 90); 
   }
 
   const handleRandomCodeGeneration = () => {
     const code = generateRandomCode();
     setRandomCode(code);
+    sessionStorage.setItem('randomCode', code);
   };
+
+  useEffect(() => {
+    const storedCode = sessionStorage.getItem('randomCode');
+    if (storedCode) {
+      setRandomCode(storedCode);
+    } else {
+      handleRandomCodeGeneration();
+    }
+  }, []);
 
   const handleDiaChange = (e) => {
     const value = e.target.value;
@@ -49,35 +57,56 @@ function Curp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+  
     if (validation !== randomCode.toString()) {
       alert('Código de verificación incorrecto.');
       return;
     }
-
+  
     if (!primernombre || !primerApellido || !dia || !mes || !ano || !sexo || !entidadNacimiento) {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
+  
+    if (sexo === '') {
+      alert('Por favor selecciona tu género.');
+      return;
+    }
+  
     const curp = generarCURP();
     setCurpGenerada(curp);
   };
-
+  
   const obtenerSegundaVocal = (apellido) => {
     const vocales = ['A', 'E', 'I', 'O', 'U']; 
     let contadorVocales = 0;
-    for (let letra of apellido) {
-      const letraMayuscula = letra.toUpperCase();
-      if (vocales.includes(letraMayuscula)) {
-        contadorVocales++;
-        if (contadorVocales === 2) {
-          return letraMayuscula; 
+  
+    const primeraLetraMayuscula = apellido[0].toUpperCase();
+    if (vocales.includes(primeraLetraMayuscula)) {
+      for (let i = 1; i < apellido.length; i++) {
+        const letraMayuscula = apellido[i].toUpperCase();
+        if (vocales.includes(letraMayuscula)) {
+          contadorVocales++;
+          if (contadorVocales === 1) {
+            return letraMayuscula; 
+          }
+        }
+      }
+    } else {
+      for (let i = 0; i < apellido.length; i++) {
+        const letraMayuscula = apellido[i].toUpperCase();
+        if (vocales.includes(letraMayuscula)) {
+          contadorVocales++;
+          if (contadorVocales === 1) {
+            return letraMayuscula; 
+          }
         }
       }
     }
+    
     return ''; 
   };
-
+  
   const obtenerConsonante = (palabra) => {
     const consonantes = 'BCDFGHJKLMNÑPQRSTVWXYZ';
     for (let letra of palabra) {
@@ -105,8 +134,8 @@ function Curp() {
       primerNombreGenerar = segundonombre.toUpperCase();
     }
 
-    const primeraLetraPrimerNombre = primerNombreGenerar.charAt(0);
     const primeraLetraPrimerApellido = primerApellido.charAt(0).toUpperCase();
+    const primeraLetraPrimerNombre = primerNombreGenerar.charAt(0);
     const segundaConsonantePrimerApellido = obtenerConsonante(primerApellido.slice(1));
     const segundaVocalPrimerApellido = obtenerSegundaVocal(primerApellido);
     const primeraLetraSegundoApellido = segundoApellido ? segundoApellido.charAt(0).toUpperCase() : 'X';
@@ -115,7 +144,7 @@ function Curp() {
     const fechaNacimiento = ano.slice(-2) + mes.padStart(2, '0') + dia.padStart(2, '0');
     const entidadAbreviatura = entidadNacimiento.slice(0, 2);
     const sexoMayusculas = sexo.toUpperCase();
-    const curpGenerada = primeraLetraPrimerApellido + segundaVocalPrimerApellido + primeraLetraSegundoApellido + primeraLetraPrimerNombre + fechaNacimiento + sexoMayusculas + entidadAbreviatura +  segundaConsonantePrimerApellido + segundaConsonanteSegundoApellido + primeraConsonantePrimerNombre;
+    const curpGenerada = primeraLetraPrimerApellido + segundaVocalPrimerApellido + primeraLetraSegundoApellido + primeraLetraPrimerNombre + fechaNacimiento + sexoMayusculas + entidadAbreviatura +  segundaConsonantePrimerApellido + segundaConsonanteSegundoApellido + primeraConsonantePrimerNombre + "XX";
     
     return curpGenerada;
   };
@@ -126,19 +155,8 @@ function Curp() {
       <div className='container'>
         <div className='containerform'>
           <form className="form" onSubmit={handleSubmit}>
-            <div className="flex">
+            <div>
               <p className="title">Ingresa tus datos</p>
-              <button className="generation" type="button" onClick={handleRandomCodeGeneration}>
-                Generar código
-              </button>
-              <span>{randomCode}</span>
-              <input
-                className="input"
-                type="text"
-                placeholder="Código de verificación"
-                value={validation}
-                onChange={(e) => setValidation(e.target.value)}
-              />
               <label>
                 <input className="input" type="text" placeholder="Primer Nombre" required="" value={primernombre} onChange={(e) => setPriNombre(e.target.value)} />
               </label>
@@ -213,6 +231,20 @@ function Curp() {
                 <option value="ZS">Zacatecas</option>
               </select>
             </label>
+            <div className='flex'>
+              <div>
+                <button className="generationcode" type="button" onClick={handleRandomCodeGeneration}> Generar código</button>
+                <span>{randomCode}</span>
+              </div>
+              <div>
+              <input 
+                className="input"
+                type="text"
+                placeholder="Código de verificación"
+                value={validation}
+                onChange={(e) => setValidation(e.target.value)}/>
+              </div>
+            </div>
             <button className="generation" type="submit">Generar CURP</button>
           </form>
         </div>

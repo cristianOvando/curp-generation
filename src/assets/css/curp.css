@@ -14,6 +14,11 @@
   height: 100vh;
 }
 
+.flex{
+  display: flex;
+  justify-content: space-between;
+}
+
 .info{
   margin-top: -5vh;
   margin-left: -40vh;
@@ -51,7 +56,7 @@
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 15px;
-  margin-top: 2vh;
+  margin-top: 5vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -95,6 +100,17 @@
   border: none;
   border-radius: 20px; 
   padding: 10px 20px; 
+  cursor: pointer;
+  margin-bottom: 1VH;
+}
+
+.generationcode {
+  background-color: #00A4AC;
+  color: white;
+  border: none;
+  border-radius: 20px; 
+  padding: 10px 15px; 
+  margin-right: 1vh;
   cursor: pointer;
   margin-bottom: 1VH;
 }
